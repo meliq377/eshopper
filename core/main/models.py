@@ -46,7 +46,7 @@ class Product(models.Model):
     web_id = models.CharField(max_length=100)
     availability = models.CharField(max_length=100, choices=(('In Stock', 'In Stock'),
                                                              ('In not Stock', 'In not Stock')))
-    condition = models.CharField(max_length=100,  choices=(('New', 'New'),
+    condition = models.CharField(max_length=100, blank=True,  choices=(('New', 'New'),
                                                            ('Sale', 'Sale')))
     price = models.DecimalField(max_digits=12, decimal_places=2)
 
