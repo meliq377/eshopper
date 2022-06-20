@@ -1,10 +1,95 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+        <section id="cart_items">
+            <div class="container">
+                <div class="breadcrumbs">
+                    <ol class="breadcrumb">
+                        <li><a href="#">Home</a></li>
+                        <li class="active">Shopping Cart</li>
+                    </ol>
+                </div>
+                <div class="table-responsive cart_info">
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr class="cart_menu">
+                            <td class="image">Item</td>
+                            <td class="description"></td>
+                            <td class="price">Price</td>
+                            <td class="quantity">Quantity</td>
+                            <td class="total">Total</td>
+                            <td></td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in cartitems %}
+                            <tr>
+                                <td class="cart_product">
+                                    <a href=""><img src="{{ item.product.img.url }}" alt="" height="90px"></a>
+                                </td>
+                                <td class="cart_description">
+                                    <h4><a href="">{{ item.product.title }}</a></h4>
+                                    <p>{{ item.product.web_id }}</p>
+                                </td>
+                                <td class="cart_price">
+                                    <p>${{ item.product.price }}</p>
+                                </td>
+                                <td class="cart_quantity">
+                                        <input class="cart_quantity_input" type="number" name="quantity"
+                                               value="{{ item.quantity }}"
+                                               autocomplete="off" size="2">
+                                </td>
+                                <td class="cart_total">
+                                    <p class="cart_total_price">${{ item.get_total }}</p>
+                                </td>
+                                <td class="cart_delete">
+                                    <a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <td colspan="4">&nbsp;</td>
+                            <td colspan="2">
+                                <table class="table table-condensed total-result">
+                                    <tr>
+                                        <td>Cart Sub Total</td>
+                                        <td>${{ cart.get_cart_total }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Cart Item Total</td>
+                                        <td>{{ cart.get_itemtotal }} Items</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Exo Tax</td>
+                                        <td>$2</td>
+                                    </tr>
+                                    <tr class="shipping-cost">
+                                        <td>Shipping Cost</td>
+                                        <td>Free</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total</td>
+                                        <td><span>${{ cart.get_cart_all_total }}</span></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section> <!--/#cart_items-->
+    {% else %}
+        <div style="margin-bottom: 50px; text-align: center">
+        <h1>YOU ARE NOT LOGIN</h1>
+        <H2>PLEASE</H2>
+        </div>
+        <div style="display: flex; justify-content: space-between">
+        <li><a href="{% url 'register' %}"><i class="fa fa-lock"></i> Register</a></li>
+        <span style="color: #d58512; font-size: xx-large">Or</span>
+        <li><a href="{% url 'login' %}"><i class="fa fa-lock"></i> Login</a></li>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,10 +1,13 @@
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView, CreateView
-from .models import Product, Category, Brand
+from .models import *
 from .forms import NewUserForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
+from django.db.models import Count
+from django.http import JsonResponse
+import json
 
 
 def register_request(request):
@@ -50,8 +53,8 @@ class IndexListView(ListView):
 
     def get(self, request):
         categories = Category.objects.filter(parent=None)
-        brands = Brand.objects.all()
         products = Product.objects.order_by('-id')
+        brands = Brand.objects.annotate(cnt=Count('products')).filter(cnt__gt=0)
         context = {
             'categories': categories,
             'brands': brands,
@@ -65,7 +68,7 @@ class CategoryListView(ListView):
 
     def get(self, request, slug):
         categories = Category.objects.filter(parent=None)
-        brands = Brand.objects.all()
+        brands = Brand.objects.annotate(cnt=Count('products')).all()
         products = Product.objects.filter(category__slug=slug).order_by('-id')
         products_b = Product.objects.filter(brand__slug=slug).order_by('-id')
         context = {
@@ -75,3 +78,38 @@ class CategoryListView(ListView):
             'products_b': products_b,
         }
         return render(request, self.template_name, context)
+
+
+def cart(request):
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        cart, created = Cart.objects.get_or_create(customer=customer, completed=False)
+        cartitems = cart.cartitems_set.all()
+    else:
+        cartitems = []
+        cart = {'get_cart_total': 0, 'get_itemtotal': 0}
+
+    return render(request, 'main/cart.html', {'cartitems': cartitems, 'cart': cart})
+
+
+def checkout(request):
+    return render(request, 'main/checkout.html', {})
+
+
+def updateCart(request):
+    data = json.loads(request.body)
+    productId = data['productId']
+    action = data['action']
+    product = Product.objects.get(id=productId)
+    customer = request.user.customer
+    cart, created = Cart.objects.get_or_create(customer=customer, completed=False)
+    cartitems, created = CartItems.objects.get_or_create(cart=cart, product=product)
+
+    if action == 'add':
+        cartitems.quantity += 1
+        cartitems.save()
+    return JsonResponse('Cart Update', safe=False)
+
+
+def updateQuantity(request):
+    return JsonResponse('Quantity updated', safe=False)
