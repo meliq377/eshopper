@@ -1,3 +1,4 @@
+import requests
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView, CreateView
 from .models import *
@@ -8,6 +9,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.db.models import Count
 from django.http import JsonResponse
 import json
+from django.core import serializers
+from django.http import HttpResponse
 
 
 def register_request(request):
@@ -80,36 +83,29 @@ class CategoryListView(ListView):
         return render(request, self.template_name, context)
 
 
-def cart(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        cart, created = Cart.objects.get_or_create(customer=customer, completed=False)
-        cartitems = cart.cartitems_set.all()
-    else:
-        cartitems = []
-        cart = {'get_cart_total': 0, 'get_itemtotal': 0}
+def add_to_cart(request):
+    if request.method == "POST":
+        if request.user.is_authenticated:
+            prod_id = int(request.POST.get('id'))
+            product_check = Product.objects.get(id=prod_id)
+            if product_check:
+                if OrderProduct.objects.filter(user=request.user.id, product_id=prod_id):
+                    return JsonResponse({'status': 'Product Already in Cart'})
+                else:
+                    prod_qty = Product.objects.get(pk=prod_id).quantity
 
-    return render(request, 'main/cart.html', {'cartitems': cartitems, 'cart': cart})
+                    if product_check.quantity >= prod_qty:
+                        OrderProduct.objects.create(user_id=request.user.id, product_id=prod_id, price=Product.objects.get(pk=prod_id).price, quantity=prod_qty)
+                        return JsonResponse({'status': 'Product added successfully'})
+                    else:
+                        return JsonResponse({'status': 'Only ' + str(product_check.quantity) + 'quantity available'})
+            else:
+                return JsonResponse({'status': 'No such product found'})
+        else:
+            return JsonResponse({'status': 'Login to Continue'})
+    return redirect('/')
 
-
-def checkout(request):
-    return render(request, 'main/checkout.html', {})
-
-
-def updateCart(request):
-    data = json.loads(request.body)
-    productId = data['productId']
-    action = data['action']
-    product = Product.objects.get(id=productId)
-    customer = request.user.customer
-    cart, created = Cart.objects.get_or_create(customer=customer, completed=False)
-    cartitems, created = CartItems.objects.get_or_create(cart=cart, product=product)
-
-    if action == 'add':
-        cartitems.quantity += 1
-        cartitems.save()
-    return JsonResponse('Cart Update', safe=False)
-
-
-def updateQuantity(request):
-    return JsonResponse('Quantity updated', safe=False)
+def cartview(request):
+    cart = OrderProduct.objects.filter(user=request.user)
+    context = {'cart': cart}
+    return render(request, 'main/cart.html', context)

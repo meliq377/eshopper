@@ -85,15 +85,16 @@
                                 <img src="{{ product.img.url }}" alt=""/>
                                 <h2>{{ product.price }}$</h2>
                                 <p>{{ product.title }}</p>
-                                <a href="#" class="btn btn-default add-to-cart" data-action="add" data-product="{{ product.id }}"><i class="fa fa-shopping-cart"></i>Add
-                                    to cart</a>
+                                <button class="btn btn-default add-to-cart" data-productId="{{ product.id }}" data-productTitle="{{ product.title }}"><i
+                                        class="fa fa-shopping-cart"></i>Add to cart</button>
                             </div>
                             <div class="product-overlay">
                                 <div class="overlay-content">
                                     <h2>{{ product.price }}$</h2>
                                     <p>{{ product.title }}</p>
-                                    <a href="#" class="btn btn-default add-to-cart"  data-action="add" data-product="{{ product.id }}" ><i class="fa fa-shopping-cart"></i>Add
-                                        to cart</a>
+
+                                    <button class="btn btn-default add-to-cart" data-productId="{{ product.id }}" data-productTitle="{{ product.title }}"><i
+                                            class="fa fa-shopping-cart"></i>Add to cart</button>
                                 </div>
                             </div>
                         </div>

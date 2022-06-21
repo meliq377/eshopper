@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-import uuid
 
 
 class Category(models.Model):
@@ -38,15 +37,6 @@ class Brand(models.Model):
         ordering = ['id']
 
 
-class Customer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
-    email = models.EmailField()
-
-    def __str__(self):
-        return self.name
-
-
 class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name='products', blank=True)
@@ -60,6 +50,7 @@ class Product(models.Model):
     condition = models.CharField(max_length=100, blank=True, choices=(('New', 'New'),
                                                                       ('Sale', 'Sale')))
     price = models.DecimalField(max_digits=12, decimal_places=2)
+    quantity = models.IntegerField(default=1)
 
     def __str__(self):
         return self.title
@@ -70,53 +61,13 @@ class Product(models.Model):
         ordering = ['-id']
 
 
-class Cart(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    cart_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    completed = models.BooleanField(default=False)
-
-    def __str__(self):
-        return str(self.id)
-
-    @property
-    def get_cart_total(self):
-        cartitems = self.cartitems_set.all()
-        total = sum([item.get_total for item in cartitems])
-        return total
-
-    @property
-    def get_itemtotal(self):
-        cartitems = self.cartitems_set.all()
-        total = sum([item.quantity for item in cartitems])
-        return total
-
-    @property
-    def get_cart_all_total(self):
-        cartitems = self.cartitems_set.all()
-        total = sum([item.get_total for item in cartitems]) + 2
-        return total
-
-class CartItems(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+class OrderProduct(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.IntegerField(default=0)
-
-    @property
-    def get_total(self):
-        total = self.quantity * self.product.price
-        return total
+    quantity = models.IntegerField(default=1)
+    price = models.DecimalField(max_digits=12, decimal_places=2)
 
     def __str__(self):
-        return self.product.title
+        return str(self.product)
 
 
-class ShippingAddress(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
-    address = models.CharField(max_length=100)
-    city = models.CharField(max_length=100)
-    state = models.CharField(max_length=100)
-    zipcode = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.address
