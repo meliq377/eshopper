@@ -61,6 +61,18 @@ class Product(models.Model):
         ordering = ['-id']
 
 
+class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='order')
+    status = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.username
+
+    class Meta:
+        verbose_name = 'order'
+        verbose_name_plural = 'orders'
+
+
 class OrderProduct(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -69,5 +81,10 @@ class OrderProduct(models.Model):
 
     def __str__(self):
         return str(self.product)
+
+    class Meta:
+        verbose_name = 'orderproduct'
+        verbose_name_plural = 'orederproducts'
+        ordering = ['user_id']
 
 

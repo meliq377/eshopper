@@ -90,8 +90,10 @@ def add_to_cart(request):
             product_check = Product.objects.get(id=prod_id)
 
             if product_check:
-                if OrderProduct.objects.filter(user=request.user.id, product_id=prod_id):
-                    order_qty = OrderProduct.objects.get(product_id=prod_id).quantity
+                if not Order.objects.filter(user_id=request.user.id):
+                    Order.objects.create(user_id=request.user.id)
+                if OrderProduct.objects.filter(user_id=request.user.id, product_id=prod_id):
+                    order_qty = OrderProduct.objects.get(product_id=prod_id, user_id=request.user.id).quantity
                     OrderProduct.objects.filter(product_id=prod_id).update(quantity=order_qty + 1)
                     return JsonResponse({'status': 'Product updated successfully'})
                 else:

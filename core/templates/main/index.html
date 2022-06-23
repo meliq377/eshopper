@@ -125,8 +125,8 @@
                                                 <img src="{{ item.img.url }}" alt="" height="150px"/>
                                                 <h2>{{ item.price }}$</h2>
                                                 <p>{{ item.title }}</p>
-                                                <a href="#" class="btn btn-default add-to-cart"><i
-                                                        class="fa fa-shopping-cart"></i>Add to cart</a>
+                                                <button class="btn btn-default add-to-cart" data-productId="{{ item.id }}" data-productTitle="{{ item.title }}"><i
+                                            class="fa fa-shopping-cart"></i>Add to cart</button>
                                             </div>
 
                                         </div>
