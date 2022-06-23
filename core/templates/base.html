@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
@@ -14,6 +15,9 @@
     <link href="{% static 'css/animate.css' %}" rel="stylesheet">
     <link href="{% static 'css/main.css' %}" rel="stylesheet">
     <link href="{% static 'css/responsive.css' %}" rel="stylesheet">
+    <link href="{% static 'css/alertify.bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'css/alertify.core.css' %}" rel="stylesheet">
+    <link href="{% static 'css/alertify.default.css' %}" rel="stylesheet">
     <script>
         let user = "{{ request.user }}"
             function getCookie(name) {
@@ -75,6 +79,8 @@
 <script src="{% static 'js/jquery.prettyPhoto.js' %}"></script>
 <script src="{% static 'js/main.js' %}"></script>
 <script src="{% static 'js/cart.js' %}"></script>
+<script src="{% static 'js/alertify.js' %}"></script>
+<script src="{% static 'js/alertify.min.js' %}"></script>
 {#<script>#}
 {#$(".input-number").bind('keyup mouseup', function () {#}
 {#    let quantity = $(this).val();#}

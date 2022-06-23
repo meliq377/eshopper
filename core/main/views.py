@@ -88,22 +88,24 @@ def add_to_cart(request):
         if request.user.is_authenticated:
             prod_id = int(request.POST.get('id'))
             product_check = Product.objects.get(id=prod_id)
+
             if product_check:
                 if OrderProduct.objects.filter(user=request.user.id, product_id=prod_id):
-                    return JsonResponse({'status': 'Product Already in Cart'})
+                    order_qty = OrderProduct.objects.get(product_id=prod_id).quantity
+                    OrderProduct.objects.filter(product_id=prod_id).update(quantity=order_qty + 1)
+                    return JsonResponse({'status': 'Product updated successfully'})
                 else:
-                    prod_qty = Product.objects.get(pk=prod_id).quantity
+                    OrderProduct.objects.create(user_id=request.user.id, product_id=prod_id,
+                                                price=Product.objects.get(pk=prod_id).price,
+                                                quantity=1)
+                    return JsonResponse({'status': 'Product added successfully'})
 
-                    if product_check.quantity >= prod_qty:
-                        OrderProduct.objects.create(user_id=request.user.id, product_id=prod_id, price=Product.objects.get(pk=prod_id).price, quantity=prod_qty)
-                        return JsonResponse({'status': 'Product added successfully'})
-                    else:
-                        return JsonResponse({'status': 'Only ' + str(product_check.quantity) + 'quantity available'})
             else:
                 return JsonResponse({'status': 'No such product found'})
         else:
             return JsonResponse({'status': 'Login to Continue'})
     return redirect('/')
+
 
 def cartview(request):
     cart = OrderProduct.objects.filter(user=request.user)

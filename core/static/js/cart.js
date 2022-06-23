@@ -11,7 +11,11 @@ $(document).ready(function (){
                 'id': productId,
             },
             dataTypes: 'json',
-            method: 'POST'
+            method: 'POST',
+            success: function (response) {
+                console.log(response)
+                alertify.success(response.status)
+            }
         })
     })
 })
