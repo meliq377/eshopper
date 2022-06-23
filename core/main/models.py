@@ -65,6 +65,18 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='order')
     status = models.BooleanField(default=False)
 
+    @property
+    def get_cart_total(self):
+        orderproducts = self.orderproducts_set.all()
+        total = sum([item.get_total for item in orderproducts])
+        return total
+
+    @property
+    def get_itemtotal(self):
+        orderproducts = self.orderproducts_set.all()
+        total = sum([item.quantity for item in orderproducts])
+        return total
+
     def __str__(self):
         return self.user.username
 
@@ -78,6 +90,12 @@ class OrderProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
     price = models.DecimalField(max_digits=12, decimal_places=2)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, blank=True, related_name='orderproduct')
+
+    @property
+    def get_total(self):
+        total = self.quantity * self.product.price
+        return total
 
     def __str__(self):
         return str(self.product)
@@ -86,5 +104,3 @@ class OrderProduct(models.Model):
         verbose_name = 'orderproduct'
         verbose_name_plural = 'orederproducts'
         ordering = ['user_id']
-
-

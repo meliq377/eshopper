@@ -81,36 +81,6 @@
 <script src="{% static 'js/cart.js' %}"></script>
 <script src="{% static 'js/alertify.js' %}"></script>
 <script src="{% static 'js/alertify.min.js' %}"></script>
-{#<script>#}
-{#$(".input-number").bind('keyup mouseup', function () {#}
-{#    let quantity = $(this).val();#}
-{#    if (quantity < 0){#}
-{#        quantity = 0;#}
-{#    }#}
-{#    let product_id = $(this).attr('data-product-id');#}
-{#    $.ajax({#}
-{#        headers: {#}
-{#            'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')#}
-{#        },#}
-{#        type: 'POST',#}
-{#        url: '/quantity/change',#}
-{#        data: {#}
-{#            quantity: quantity,#}
-{#            product_id: product_id#}
-{#        },#}
-{#        success: function (data) {#}
-{#            if (data == 0){#}
-{#                $(`.product-${product_id}`).remove()#}
-{#            }#}
-{#            $('.total').html(`#}
-{#            ${data}#}
-{#            `)#}
-{#        },#}
-{#        error: function () {#}
-{##}
-{#                    },#}
-{#    })#}
-{#});#}
-{#</script>#}
+
 </body>
 </html>

@@ -92,6 +92,7 @@ def add_to_cart(request):
             if product_check:
                 if not Order.objects.filter(user_id=request.user.id):
                     Order.objects.create(user_id=request.user.id)
+                order = Order.objects.get(user_id=request.user.id).id
                 if OrderProduct.objects.filter(user_id=request.user.id, product_id=prod_id):
                     order_qty = OrderProduct.objects.get(product_id=prod_id, user_id=request.user.id).quantity
                     OrderProduct.objects.filter(product_id=prod_id).update(quantity=order_qty + 1)
@@ -99,14 +100,40 @@ def add_to_cart(request):
                 else:
                     OrderProduct.objects.create(user_id=request.user.id, product_id=prod_id,
                                                 price=Product.objects.get(pk=prod_id).price,
-                                                quantity=1)
+                                                quantity=1, order_id=order)
                     return JsonResponse({'status': 'Product added successfully'})
 
             else:
                 return JsonResponse({'status': 'No such product found'})
         else:
             return JsonResponse({'status': 'Login to Continue'})
-    return redirect('/')
+    return JsonResponse({'error': 'Login to Continue'}, status=422)
+
+
+def cart_quantity_update(request):
+    if request.method == 'POST':
+        product_id = int(request.POST.get('product_id'))
+        if OrderProduct.objects.filter(user_id=request.user.id, product_id=product_id):
+            order_qty = int(request.POST.get('quantity'))
+            orderproduct = OrderProduct.objects.get(product_id=product_id, user_id=request.user.id)
+            orderproduct.quantity = order_qty
+            orderproduct.save()
+            total_price = order_qty * OrderProduct.objects.get(user_id=request.user.id, product_id=product_id).price
+            return JsonResponse({'status': 'Updated Successfully', 'total': total_price}, status=200)
+        return JsonResponse({'status': 'Error'}, status=422)
+    return JsonResponse({'status': 'Error'}, status=422)
+
+
+def cart_quantity_delete(request):
+    if request.method == 'POST':
+        product_id = int(request.POST.get('product_id'))
+        if OrderProduct.objects.filter(user_id=request.user.id, product_id=product_id):
+            orderproduct = OrderProduct.objects.get(product_id=product_id, user_id=request.user.id)
+            product = Product.objects.get(pk=product_id)
+            orderproduct.delete()
+            return JsonResponse({'status': product.title + ' Successfully Deleted'}, status=200)
+        return JsonResponse({'status': 'Error'}, status=422)
+    return JsonResponse({'status': 'Error'}, status=422)
 
 
 def cartview(request):
