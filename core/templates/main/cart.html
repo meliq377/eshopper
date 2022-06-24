@@ -57,11 +57,11 @@
                                 <table class="table table-condensed total-result">
                                     <tr>
                                         <td>Cart Sub Total</td>
-                                        <td>${{ cart.get_cart_total }}</td>
+                                        <td>${{ order.get_cart_total }}</td>
                                     </tr>
                                     <tr>
                                         <td>Cart Item Total</td>
-                                        <td>{{ cart.get_itemtotal }} Items</td>
+                                        <td>{{ order.get_itemtotal }} Items</td>
                                     </tr>
                                     <tr>
                                         <td>Exo Tax</td>
@@ -73,7 +73,7 @@
                                     </tr>
                                     <tr>
                                         <td>Total</td>
-                                        <td><span>${{ cart.get_cart_all_total }}</span></td>
+                                        <td><span>${{ order.get_cart_all_total }}</span></td>
                                     </tr>
                                 </table>
                             </td>

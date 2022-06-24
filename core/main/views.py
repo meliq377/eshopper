@@ -137,6 +137,12 @@ def cart_quantity_delete(request):
 
 
 def cartview(request):
-    cart = OrderProduct.objects.filter(user=request.user)
-    context = {'cart': cart}
+    cart = OrderProduct.objects.filter(user_id=request.user)
+    order = Order.objects.get(user_id=request.user)
+    orderproduct = order.orderproduct_set.all()
+    context = {
+        'cart': cart,
+        'orderproducts': orderproduct,
+        'order': order,
+    }
     return render(request, 'main/cart.html', context)
