@@ -42,6 +42,15 @@ $('.input-number').bind('keyup mouseup', function () {
             $(`.product-${product_id} .cart_total_price`).html(`
                 $${data.total}
             `)
+            $(`.cart_total .cart_total`).html(`
+                $${data.total_cart}
+            `)
+            $(`.cart_item .cart_item`).html(`
+                ${data.cart_item} Items
+            `)
+            $(`.total_all_cart .total_all_cart`).html(`
+                $${data.total_all_cart}
+            `)
         },
         error: function () {
             alertify.error('error')
@@ -65,6 +74,15 @@ $('body').on('click', '.cart_delete', function () {
             console.log(data)
             alertify.success(data.status)
             $(`.product-${product_id}`).remove()
+            $(`.cart_total .cart_total`).html(`
+                $${data.total_cart}
+            `)
+            $(`.cart_item .cart_item`).html(`
+                ${data.cart_item} Items
+            `)
+            $(`.total_all_cart .total_all_cart`).html(`
+                $${data.total_all_cart}
+            `)
 
         },
         error: function () {

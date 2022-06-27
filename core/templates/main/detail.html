@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <div class="col-sm-9 padding-right">
+        <div class="product-details"><!--product-details-->
+            <div class="col-sm-5">
+                <div class="view-product">
+                    <img src="{{ product.img.url }}" alt=""/>
+                    <h3>ZOOM</h3>
+                </div>
+
+            </div>
+            <div class="col-sm-7">
+                <div class="product-information"><!--/product-information-->
+                    {% if produc.condition == 'New' %}
+                        <img src="{% static 'images/home/new.png' %}" class="newarrival" alt=""/>
+                    {% else %}
+                        <img src="{% static 'images/home/sale.png' %}" class="newarrival" alt=""/>
+                    {% endif %}
+                    <h2>{{ product.title }}</h2>
+                    <p>Web ID: {{ product.web_id }}</p>
+                    <span>
+									<span>US ${{ product.price }}</span>
+									 <button class="btn btn-default add-to-cart" data-productId="{{ product.id }}"
+                                             data-productTitle="{{ product.title }}"><i
+                                             class="fa fa-shopping-cart"></i>Add to cart</button>
+								</span>
+                    <p><b>Availability:</b> {{ product.availability }}</p>
+                    <p><b>Condition:</b> {{ product.condition }}</p>
+                    <p><b>Brand:</b> {{ product.brand }}</p>
+                </div><!--/product-information-->
+            </div>
+        </div><!--/product-details-->
+
+
+    </div>
+{% endblock %}

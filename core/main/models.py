@@ -86,7 +86,7 @@ class Order(models.Model):
 
     @property
     def get_cart_all_total(self):
-        total = self.get_cart_total + 2
+        total = self.get_cart_total + 6
         return total
 
 

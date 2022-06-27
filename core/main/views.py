@@ -83,6 +83,17 @@ class CategoryListView(ListView):
         return render(request, self.template_name, context)
 
 
+class ProductDetailView(DetailView):
+    template_name = 'main/detail.html'
+
+    def get(self, request, id):
+        product = Product.objects.get(pk=id)
+        context = {
+            'product': product,
+        }
+        return render(request, self.template_name, context)
+
+
 def add_to_cart(request):
     if request.method == "POST":
         if request.user.is_authenticated:
@@ -118,8 +129,12 @@ def cart_quantity_update(request):
             orderproduct = OrderProduct.objects.get(product_id=product_id, user_id=request.user.id)
             orderproduct.quantity = order_qty
             orderproduct.save()
+            order = Order.objects.get(user_id=request.user)
+            total_cart = order.get_cart_total
+            cart_item = order.get_itemtotal
+            total_all_cart = order.get_cart_all_total
             total_price = order_qty * OrderProduct.objects.get(user_id=request.user.id, product_id=product_id).price
-            return JsonResponse({'status': 'Updated Successfully', 'total': total_price}, status=200)
+            return JsonResponse({'status': 'Updated Successfully', 'total': total_price, 'total_cart': total_cart, 'cart_item': cart_item, 'total_all_cart': total_all_cart}, status=200)
         return JsonResponse({'status': 'Error'}, status=422)
     return JsonResponse({'status': 'Error'}, status=422)
 
@@ -131,7 +146,11 @@ def cart_quantity_delete(request):
             orderproduct = OrderProduct.objects.get(product_id=product_id, user_id=request.user.id)
             product = Product.objects.get(pk=product_id)
             orderproduct.delete()
-            return JsonResponse({'status': product.title + ' Successfully Deleted'}, status=200)
+            order = Order.objects.get(user_id=request.user)
+            total_cart = order.get_cart_total
+            cart_item = order.get_itemtotal
+            total_all_cart = order.get_cart_all_total
+            return JsonResponse({'status': product.title + ' Successfully Deleted',  'total_cart': total_cart, 'cart_item': cart_item, 'total_all_cart': total_all_cart}, status=200)
         return JsonResponse({'status': 'Error'}, status=422)
     return JsonResponse({'status': 'Error'}, status=422)
 
@@ -139,10 +158,9 @@ def cart_quantity_delete(request):
 def cartview(request):
     cart = OrderProduct.objects.filter(user_id=request.user)
     order = Order.objects.get(user_id=request.user)
-    orderproduct = order.orderproduct_set.all()
+
     context = {
         'cart': cart,
-        'orderproducts': orderproduct,
         'order': order,
     }
     return render(request, 'main/cart.html', context)
