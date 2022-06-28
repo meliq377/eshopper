@@ -8,9 +8,6 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.db.models import Count
 from django.http import JsonResponse
-import json
-from django.core import serializers
-from django.http import HttpResponse
 
 
 def register_request(request):
@@ -86,8 +83,8 @@ class CategoryListView(ListView):
 class ProductDetailView(DetailView):
     template_name = 'main/detail.html'
 
-    def get(self, request, id):
-        product = Product.objects.get(pk=id)
+    def get(self, request, slug):
+        product = Product.objects.get(slug=slug)
         context = {
             'product': product,
         }
